@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import pickle
 import matplotlib.pyplot as plt
+import plotly.express as px
 
 # CONFIG
 st.set_page_config(
@@ -146,66 +147,99 @@ elif page == "Profile":
 
 
 # DASHBOARD PAGE
-
 elif page == "Dashboard":
-    st.title("📊 Dashboard Analisis")
+    st.title("📊 Delivery Insights Dashboard")
 
     try:
         df = pd.read_csv("Food_Delivery_Times.csv")
-
-        
-        # METRICS
-        
-        col1, col2, col3 = st.columns(3)
-
-        col1.metric("Avg Delivery Time", f"{df['Delivery_Time_min'].mean():.1f} min")
-        col2.metric("Avg Distance", f"{df['Distance_km'].mean():.1f} km")
-        col3.metric("Avg Prep Time", f"{df['Preparation_Time_min'].mean():.1f} min")
-
-        st.divider()
-
-        
-        # DISTRIBUTION       
-        st.subheader("📈 Distribusi Delivery Time")
-
-        fig, ax = plt.subplots()
-        ax.hist(df['Delivery_Time_min'], bins=30)
-        ax.set_xlabel("Delivery Time")
-        ax.set_ylabel("Frequency")
-        st.pyplot(fig)
-
-        
-        # GRID CHART    
-        col1, col2 = st.columns(2)
-
-        with col1:
-            st.subheader("🚗 Distance vs Delivery Time")
-            fig2, ax2 = plt.subplots()
-            ax2.scatter(df['Distance_km'], df['Delivery_Time_min'])
-            ax2.set_xlabel("Distance")
-            ax2.set_ylabel("Delivery Time")
-            st.pyplot(fig2)
-
-        with col2:
-            st.subheader("👨‍🍳 Preparation vs Delivery Time")
-            fig3, ax3 = plt.subplots()
-            ax3.scatter(df['Preparation_Time_min'], df['Delivery_Time_min'])
-            ax3.set_xlabel("Prep Time")
-            ax3.set_ylabel("Delivery Time")
-            st.pyplot(fig3)
-
-        st.divider()
-
-        # CATEGORY ANALYSIS        
-        st.subheader("🚦 Traffic Impact")
-
-        fig4, ax4 = plt.subplots()
-        df.boxplot(column='Delivery_Time_min', by='Traffic_Level', ax=ax4)
-        st.pyplot(fig4)
-
     except:
         st.error("❌ Dataset tidak ditemukan")
+        st.stop()
 
+        
+    # METRICS
+    
+    col1, col2, col3 = st.columns(3)
+
+    col1.metric("⏱️ Avg Delivery Time", f"{df['Delivery_Time_min'].mean():.1f} min")
+    col2.metric("📏 Avg Distance", f"{df['Distance_km'].mean():.1f} km")
+    col3.metric("👨‍🍳 Avg Prep Time", f"{df['Preparation_Time_min'].mean():.1f} min")
+
+    st.divider()
+
+        
+    # DISTRIBUTION (INTERAKTIF)
+    
+    st.subheader("📈 Delivery Time Distribution")
+
+    fig = px.histogram(
+        df,
+        x="Delivery_Time_min",
+        nbins=30,
+        title="Distribution of Delivery Time",
+        color_discrete_sequence=["#636EFA"]
+    )
+    st.plotly_chart(fig, use_container_width=True)
+
+    
+    # RELATIONSHIP
+    
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.subheader("🚗 Distance Impact")
+        fig2 = px.scatter(
+            df,
+            x="Distance_km",
+            y="Delivery_Time_min",
+            trendline="ols",
+            title="Distance vs Delivery Time"
+        )
+        st.plotly_chart(fig2, use_container_width=True)
+
+    with col2:
+        st.subheader("👨‍🍳 Preparation Impact")
+        fig3 = px.scatter(
+            df,
+            x="Preparation_Time_min",
+            y="Delivery_Time_min",
+            trendline="ols",
+            title="Preparation Time vs Delivery Time"
+        )
+        st.plotly_chart(fig3, use_container_width=True)
+
+    st.divider()
+
+    
+    # CATEGORY (LEBIH USER-FRIENDLY)
+    
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.subheader("🚦 Traffic Impact")
+        traffic_avg = df.groupby("Traffic_Level")["Delivery_Time_min"].mean().reset_index()
+
+        fig4 = px.bar(
+            traffic_avg,
+            x="Traffic_Level",
+            y="Delivery_Time_min",
+            color="Traffic_Level",
+            title="Average Delivery Time by Traffic"
+        )
+        st.plotly_chart(fig4, use_container_width=True)
+
+    with col2:
+        st.subheader("🌧️ Weather Impact")
+        weather_avg = df.groupby("Weather")["Delivery_Time_min"].mean().reset_index()
+
+        fig5 = px.bar(
+            weather_avg,
+            x="Weather",
+            y="Delivery_Time_min",
+            color="Weather",
+            title="Average Delivery Time by Weather"
+        )
+        st.plotly_chart(fig5, use_container_width=True)
 
 # PREDICT PAGE
 elif page == "Predict":
