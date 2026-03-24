@@ -412,11 +412,65 @@ elif page == "Predict":
         input_data = pd.get_dummies(input_data)
         input_data = input_data.reindex(columns=columns, fill_value=0)
 
-        prediction = model.predict(input_data)
+        prediction = model.predict(input_data)[0]
 
+        # ========================
+        # RESULT CATEGORY
+        # ========================
+        if prediction < 30:
+            status = "🚀 Fast Delivery"
+            color = "#22c55e"
+        elif prediction < 60:
+            status = "⏱️ Normal Delivery"
+            color = "#facc15"
+        else:
+            status = "⚠️ Slow Delivery"
+            color = "#ef4444"
+
+        # ========================
+        # DISPLAY RESULT
+        # ========================
         st.markdown(f"""
         <div class="card">
-        <h2>⏱️ {prediction[0]:.2f} minutes</h2>
-        <p>Estimated Delivery Time</p>
+            <h2 style="color:{color}">{prediction:.2f} minutes</h2>
+            <p>{status}</p>
         </div>
         """, unsafe_allow_html=True)
+
+        # ========================
+        # AUTO INSIGHT
+        # ========================
+        insights = []
+
+        if distance > 15:
+            insights.append("📏 Jarak jauh meningkatkan waktu pengiriman")
+        if traffic == "High":
+            insights.append("🚦 Traffic tinggi menyebabkan keterlambatan")
+        if prep_time > 20:
+            insights.append("👨‍🍳 Waktu persiapan cukup lama")
+        if weather in ["Rainy", "Snowy"]:
+            insights.append("🌧️ Cuaca buruk memperlambat pengiriman")
+
+        if insights:
+            st.markdown("### 🧠 Insight")
+            for i in insights:
+                st.write(f"- {i}")
+
+        # ========================
+        # RECOMMENDATION
+        # ========================
+        recommendations = []
+
+        if distance > 15:
+            recommendations.append("📍 Gunakan hub/kitchen lebih dekat")
+        if traffic == "High":
+            recommendations.append("🛣️ Pilih rute alternatif")
+        if prep_time > 20:
+            recommendations.append("⚡ Optimalkan proses preparation")
+        if prediction > 60:
+            recommendations.append("⏱️ Berikan estimasi waktu lebih realistis ke customer")
+
+        if recommendations:
+            st.markdown("### 💡 Recommendation")
+            for r in recommendations:
+                st.write(f"- {r}")
