@@ -4,6 +4,53 @@ import pickle
 import matplotlib.pyplot as plt
 import plotly.express as px
 
+def set_custom_style():
+    st.markdown("""
+    <style>
+    /* Background */
+    .stApp {
+        background: linear-gradient(135deg, #0f172a, #1e293b);
+        color: white;
+    }
+
+    /* Title */
+    h1, h2, h3 {
+        color: #f8fafc;
+    }
+
+    /* Card style */
+    .card {
+        background: rgba(255,255,255,0.05);
+        padding: 20px;
+        border-radius: 15px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        margin-bottom: 20px;
+    }
+
+    /* Metric style */
+    .metric {
+        font-size: 20px;
+        font-weight: bold;
+        color: #38bdf8;
+    }
+
+    /* Button */
+    .stButton>button {
+        background: linear-gradient(90deg, #38bdf8, #6366f1);
+        color: white;
+        border-radius: 10px;
+        padding: 10px 20px;
+        border: none;
+    }
+
+    .stButton>button:hover {
+        background: linear-gradient(90deg, #6366f1, #38bdf8);
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+set_custom_style()
+
 def set_bg():
     st.markdown(
         f"""
@@ -54,19 +101,85 @@ model, columns = load_model()
 
 # HOME PAGE
 if page == "Home":
-    st.title("📦 Food Delivery Time Prediction")
+    st.title("📦 Food Delivery Intelligence")
+
+    # INTRO
+    st.markdown("""
+    <div class="card">
+    <h3>🚀 Smart Delivery Prediction System</h3>
+    <p>
+    Sistem ini memprediksi waktu pengiriman makanan menggunakan Machine Learning
+    berdasarkan faktor operasional seperti jarak, traffic, cuaca, dan waktu persiapan.
+    </p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    
+    # SUMMARY INSIGHT
+    st.subheader("📊 Key Insights")
+
+    col1, col2, col3 = st.columns(3)
+
+    col1.markdown("""
+    <div class="card">
+    <h4>📏 Distance</h4>
+    <p>Faktor paling berpengaruh terhadap waktu pengiriman.</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    col2.markdown("""
+    <div class="card">
+    <h4>🚦 Traffic</h4>
+    <p>Kemacetan tinggi meningkatkan delay secara signifikan.</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    col3.markdown("""
+    <div class="card">
+    <h4>👨‍🍳 Preparation</h4>
+    <p>Waktu persiapan berkontribusi terhadap total delivery time.</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # BUSINESS RECOMMENDATION
+    st.subheader("💡 Business Recommendations")
 
     st.markdown("""
-    Selamat datang di aplikasi prediksi waktu pengiriman makanan 🚚
+    <div class="card">
+    
+    <h4>🚀 Optimasi Operasional</h4>
+    <ul>
+        <li>Prioritaskan order dengan jarak dekat untuk meningkatkan delivery speed</li>
+        <li>Gunakan rute alternatif saat traffic tinggi</li>
+    </ul>
 
-    ### 🎯 Fitur:
-    - Prediksi waktu pengiriman
-    - Dashboard analisis data
-    - Informasi project & developer
+    <h4>📍 Strategi Lokasi</h4>
+    <ul>
+        <li>Tambahkan kitchen atau hub di area dengan demand tinggi</li>
+        <li>Kurangi jarak pengiriman untuk meningkatkan efisiensi</li>
+    </ul>
 
-    Gunakan menu di sebelah kiri untuk navigasi.
-    """)
+    <h4>⏱️ Efisiensi Waktu</h4>
+    <ul>
+        <li>Optimalkan proses preparation untuk mengurangi delay</li>
+        <li>Gunakan estimasi waktu real-time untuk customer</li>
+    </ul>
 
+    </div>
+    """, unsafe_allow_html=True)
+
+    
+    # MODEL INFO   
+    st.subheader("🤖 Model Performance")
+
+    st.markdown("""
+    <div class="card">
+    <p>
+    Model terbaik: <b>Linear Regression</b><br>
+    RMSE: <b>8.82</b> (± 8–9 menit error rata-rata)
+    </p>
+    </div>
+    """, unsafe_allow_html=True)
 
 # PROFILE PAGE
 
@@ -267,40 +380,43 @@ elif page == "Dashboard":
 elif page == "Predict":
     st.title("🔮 Predict Delivery Time")
 
+    st.markdown('<div class="card">', unsafe_allow_html=True)
+
     col1, col2 = st.columns(2)
 
     with col1:
-        distance = st.number_input("Distance (km)", 0.0, 20.0, step=0.1)
-        prep_time = st.number_input("Preparation Time (min)", 0, 60)
-        experience = st.number_input("Courier Experience (years)", 0, 10)
+        distance = st.number_input("📏 Distance (km)", 0.0, 20.0)
+        prep_time = st.number_input("👨‍🍳 Preparation Time", 0, 60)
+        experience = st.number_input("👨‍✈️ Experience", 0, 10)
 
     with col2:
-        weather = st.selectbox("Weather", ["Clear", "Rainy", "Snowy", "Windy", "Foggy"])
-        traffic = st.selectbox("Traffic Level", ["Low", "Medium", "High"])
-        time_of_day = st.selectbox("Time of Day", ["Morning", "Afternoon", "Evening", "Night"])
-        vehicle = st.selectbox("Vehicle Type", ["Bike", "Scooter", "Car"])
+        weather = st.selectbox("🌧️ Weather", ["Clear", "Rainy", "Snowy", "Windy", "Foggy"])
+        traffic = st.selectbox("🚦 Traffic", ["Low", "Medium", "High"])
+        time_of_day = st.selectbox("🕒 Time", ["Morning", "Afternoon", "Evening", "Night"])
+        vehicle = st.selectbox("🚗 Vehicle", ["Bike", "Scooter", "Car"])
 
-    # Preprocessing
-    input_data = pd.DataFrame({
-        'distance_km': [distance],
-        'preparation_time_min': [prep_time],
-        'courier_experience_yrs': [experience],
-        'weather': [weather],
-        'traffic_level': [traffic],
-        'time_of_day': [time_of_day],
-        'vehicle_type': [vehicle]
-    })
+    st.markdown('</div>', unsafe_allow_html=True)
 
-    input_data = pd.get_dummies(input_data)
-    input_data = input_data.reindex(columns=columns, fill_value=0)
+    # Predict button
+    if st.button("🚀 Predict Now"):
+        input_data = pd.DataFrame({
+            'distance_km': [distance],
+            'preparation_time_min': [prep_time],
+            'courier_experience_yrs': [experience],
+            'weather': [weather],
+            'traffic_level': [traffic],
+            'time_of_day': [time_of_day],
+            'vehicle_type': [vehicle]
+        })
 
-    # Predict
-    if st.button("🚀 Predict"):
+        input_data = pd.get_dummies(input_data)
+        input_data = input_data.reindex(columns=columns, fill_value=0)
+
         prediction = model.predict(input_data)
 
-        st.success(f"⏱️ Estimated Delivery Time: {prediction[0]:.2f} minutes")
-
-        if prediction[0] > 80:
-            st.warning("⚠️ Kemungkinan terjadi keterlambatan")
-        elif prediction[0] < 40:
-            st.info("✅ Pengiriman relatif cepat")
+        st.markdown(f"""
+        <div class="card">
+        <h2>⏱️ {prediction[0]:.2f} minutes</h2>
+        <p>Estimated Delivery Time</p>
+        </div>
+        """, unsafe_allow_html=True)
