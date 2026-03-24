@@ -4,6 +4,28 @@ import pickle
 import matplotlib.pyplot as plt
 import plotly.express as px
 
+def set_bg():
+    st.markdown(
+        f"""
+        <style>
+        .stApp {{
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)),
+                        url("https://images.unsplash.com/photo-1606787366850-de6330128bfc");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }}
+        .block-container {{
+            background: rgba(255,255,255,0.05);
+            padding: 30px;
+            border-radius: 15px;}}
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+set_bg()
+
 # CONFIG
 st.set_page_config(
     page_title="Food Delivery Prediction",
