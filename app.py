@@ -103,7 +103,7 @@ model, columns = load_model()
 if page == "Home":
     st.title("📦 Food Delivery Intelligence")
 
-    # INTRO
+    # Intro Card
     st.markdown("""
     <div class="card">
     <h3>🚀 Smart Delivery Prediction System</h3>
@@ -115,7 +115,7 @@ if page == "Home":
     """, unsafe_allow_html=True)
 
     
-    # SUMMARY INSIGHT
+    # Summary Insights
     st.subheader("📊 Key Insights")
 
     col1, col2, col3 = st.columns(3)
@@ -141,7 +141,7 @@ if page == "Home":
     </div>
     """, unsafe_allow_html=True)
 
-    # BUSINESS RECOMMENDATION
+    # Business Recommendation
     st.subheader("💡 Business Recommendations")
 
     st.markdown("""
@@ -292,8 +292,7 @@ elif page == "Dashboard":
         st.stop()
 
         
-    # METRICS
-    
+    # Metrics
     col1, col2, col3 = st.columns(3)
 
     col1.metric("⏱️ Avg Delivery Time", f"{df['Delivery_Time_min'].mean():.1f} min")
@@ -303,8 +302,7 @@ elif page == "Dashboard":
     st.divider()
 
         
-    # DISTRIBUTION (INTERAKTIF)
-    
+    # Distribution
     st.subheader("📈 Delivery Time Distribution")
 
     fig = px.histogram(
@@ -317,8 +315,7 @@ elif page == "Dashboard":
     st.plotly_chart(fig, use_container_width=True)
 
     
-    # RELATIONSHIP
-    
+    # Relationships
     col1, col2 = st.columns(2)
 
     with col1:
@@ -346,8 +343,7 @@ elif page == "Dashboard":
     st.divider()
 
     
-    # CATEGORY (LEBIH USER-FRIENDLY)
-    
+    # Category Impact
     col1, col2 = st.columns(2)
 
     with col1:
@@ -414,9 +410,7 @@ elif page == "Predict":
 
         prediction = model.predict(input_data)[0]
 
-        # ========================
-        # RESULT CATEGORY
-        # ========================
+        # Result Category        
         if prediction < 30:
             status = "🚀 Fast Delivery"
             color = "#22c55e"
@@ -427,9 +421,9 @@ elif page == "Predict":
             status = "⚠️ Slow Delivery"
             color = "#ef4444"
 
-        # ========================
-        # DISPLAY RESULT
-        # ========================
+        
+        # Display Result
+        
         st.markdown(f"""
         <div class="card">
             <h2 style="color:{color}">{prediction:.2f} minutes</h2>
@@ -437,9 +431,9 @@ elif page == "Predict":
         </div>
         """, unsafe_allow_html=True)
 
-        # ========================
-        # AUTO INSIGHT
-        # ========================
+        
+        # Auto Insight
+        
         insights = []
 
         if distance > 15:
@@ -456,9 +450,9 @@ elif page == "Predict":
             for i in insights:
                 st.write(f"- {i}")
 
-        # ========================
-        # RECOMMENDATION
-        # ========================
+        
+        # Recommendation
+        
         recommendations = []
 
         if distance > 15:
